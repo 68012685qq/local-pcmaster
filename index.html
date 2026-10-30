@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>本地电脑万能助手 · 下载</title>
+<meta name="description" content="完全开源免费的 Windows 系统工具箱：风险扫描、垃圾清理、图片工具箱、硬件性能优化、软件卸载残留清理。纯本地运行，无任何网络请求。">
+<link rel="icon" href="assets/icon.png" type="image/png">
+<style>
+:root{
+  --bg:#0b1020;
+  --bg-soft:#0e1630;
+  --panel:rgba(255,255,255,.045);
+  --panel-strong:rgba(255,255,255,.075);
+  --line:rgba(255,255,255,.10);
+  --line-strong:rgba(255,255,255,.18);
+  --text:#eef2ff;
+  --muted:#9aa6c4;
+  --muted-2:#7c88a8;
+  --accent:#3b82f6;
+  --accent-2:#22d3ee;
+  --accent-ink:#0b1020;
+  --success:#34d399;
+  --danger:#f87171;
+  --radius:18px;
+  --shadow:0 24px 70px rgba(2,6,23,.55);
+  --font:"Microsoft YaHei UI","Microsoft YaHei","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; font-family:var(--font); background:var(--bg); color:var(--text);
+  -webkit-font-smoothing:antialiased; line-height:1.7; overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-2;
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(59,130,246,.28), transparent 62%),
+    radial-gradient(760px 460px at 92% 6%, rgba(34,211,238,.14), transparent 60%),
+    radial-gradient(900px 700px at 50% 100%, rgba(99,102,241,.12), transparent 62%),
+    linear-gradient(180deg,#0b1020 0%,#0a0f1e 42%,#080c18 100%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:.35;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse at 50% 0%, #000 0%, transparent 72%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 0%, #000 0%, transparent 72%);
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.container{width:min(1180px, calc(100% - 40px)); margin:0 auto}
+.section{padding:88px 0}
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px; font-size:12.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:#bfdbfe; background:rgba(59,130,246,.14);
+  border:1px solid rgba(59,130,246,.35); padding:6px 12px; border-radius:999px;
+}
+h1,h2,h3{margin:0;line-height:1.25;letter-spacing:-.01em}
+h1{font-size:clamp(34px,4.4vw,56px); font-weight:800}
+h2{font-size:clamp(26px,2.6vw,36px); font-weight:750}
+h3{font-size:17.5px; font-weight:700}
+p{margin:0;color:var(--muted)}
+.muted{color:var(--muted)}
+.lead{font-size:clamp(15px,1.5vw,17.5px); color:#c5cfe6; max-width:62ch}
+
+/* ---------- 顶栏 ---------- */
+.nav{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(16px);
+  background:rgba(9,14,29,.72); border-bottom:1px solid var(--line);
+}
+.nav-inner{display:flex; align-items:center; gap:22px; height:66px}
+.brand{display:flex; align-items:center; gap:11px; font-weight:800; font-size:16px; white-space:nowrap}
+.brand img{width:30px;height:30px;border-radius:9px}
+.nav-links{display:flex; gap:6px; margin-left:auto}
+.nav-links a{
+  font-size:13.5px; color:var(--muted); padding:8px 12px; border-radius:10px;
+  transition:background .2s,color .2s;
+}
+.nav-links a:hover{background:var(--panel-strong); color:var(--text)}
+.nav-cta{display:flex; align-items:center; gap:10px}
+.version-chip{
+  font-size:12px; color:#bfdbfe; border:1px solid rgba(59,130,246,.35);
+  background:rgba(59,130,246,.12); padding:5px 10px; border-radius:999px; white-space:nowrap;
+}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  border-radius:12px; padding:11px 18px; font-size:14px; font-weight:650;
+  border:1px solid transparent; cursor:pointer; transition:transform .18s, box-shadow .18s, background .18s;
+  font-family:var(--font);
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{
+  color:#fff;
+  background:linear-gradient(135deg, #3b82f6 0%, #2563eb 55%, #1d4ed8 100%);
+  box-shadow:0 12px 30px rgba(37,99,235,.38);
+}
+.btn-primary:hover{box-shadow:0 16px 40px rgba(37,99,235,.5); transform:translateY(-1px)}
+.btn-ghost{
+  color:var(--text); background:var(--panel); border-color:var(--line-strong);
+}
+.btn-ghost:hover{background:var(--panel-strong)}
+.btn svg{width:16px;height:16px}
+
+/* ---------- 首屏 ---------- */
+.hero{padding:76px 0 30px}
+.hero-grid{display:grid; grid-template-columns:1.02fr .98fr; gap:54px; align-items:center}
+.hero h1{margin-top:18px}
+.grad-text{
+  background:linear-gradient(100deg,#eaf1ff 10%,#93c5fd 45%,#67e8f9 92%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.hero .lead{margin-top:18px}
+.hero-actions{display:flex; flex-wrap:wrap; gap:12px; margin-top:28px}
+.hero-meta{display:flex; flex-wrap:wrap; gap:16px; margin-top:20px; font-size:13px; color:var(--muted-2)}
+.hero-meta span{display:inline-flex; align-items:center; gap:7px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 0 4px rgba(52,211,153,.15)}
+.hero-list{margin:26px 0 0; padding:0; list-style:none; display:grid; gap:9px; font-size:14px; color:#cbd5e6}
+.hero-list li{display:flex; gap:10px; align-items:flex-start}
+.hero-list svg{width:16px;height:16px;flex:none;margin-top:4px;color:var(--success)}
+
+/* 窗口预览 */
+.preview{position:relative}
+.frame{
+  border-radius:22px; border:1px solid var(--line-strong); overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+  box-shadow:var(--shadow);
+}
+.frame-bar{
+  display:flex; align-items:center; gap:7px; padding:11px 14px;
+  border-bottom:1px solid var(--line); background:rgba(10,16,34,.7);
+}
+.tl{width:10px;height:10px;border-radius:50%}
+.tl.r{background:#ff5f57}.tl.y{background:#febc2e}.tl.g{background:#28c840}
+.frame-title{margin-left:10px;font-size:12px;color:var(--muted-2);letter-spacing:.02em}
+.frame img{width:100%;height:auto}
+.float-card{
+  position:absolute; display:flex; align-items:center; gap:9px;
+  background:rgba(12,19,40,.92); border:1px solid var(--line-strong);
+  padding:10px 13px; border-radius:13px; box-shadow:0 18px 44px rgba(2,6,23,.5);
+  font-size:12.5px; color:#dbe6ff; backdrop-filter:blur(10px);
+}
+.float-card svg{width:16px;height:16px;color:var(--accent-2)}
+.fc-1{left:-18px; bottom:66px; animation:float 7s ease-in-out infinite}
+.fc-2{right:-14px; top:78px; animation:float 8.5s ease-in-out infinite reverse}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@media (prefers-reduced-motion:reduce){.fc-1,.fc-2{animation:none}}
+
+/* ---------- 数据条 ---------- */
+.stats{
+  margin:36px auto 0; display:grid; grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  background:var(--panel);
+}
+.stat{padding:22px 20px; border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat b{display:block; font-size:22px; letter-spacing:-.02em}
+.stat span{font-size:12.5px; color:var(--muted-2)}
+
+/* ---------- 通用标题 ---------- */
+.sec-head{display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:36px}
+.sec-head .lead{margin-top:10px}
+.sec-note{font-size:12.5px; color:var(--muted-2); white-space:nowrap}
+
+/* ---------- 功能卡 ---------- */
+.features{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+.card{
+  position:relative; border:1px solid var(--line); border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025));
+  padding:24px; overflow:hidden; transition:transform .22s, border-color .22s, background .22s;
+}
+.card:hover{transform:translateY(-4px); border-color:rgba(59,130,246,.45); background:linear-gradient(180deg,rgba(59,130,246,.12),rgba(255,255,255,.03))}
+.card .ico{
+  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(59,130,246,.3),rgba(34,211,238,.16));
+  border:1px solid rgba(59,130,246,.35); margin-bottom:16px;
+}
+.card .ico svg{width:21px;height:21px;color:#dbeafe}
+.card p{font-size:13.5px;margin-top:8px;color:var(--muted)}
+.card .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{font-size:11.5px;color:#bfdbfe;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.28);padding:3px 8px;border-radius:999px}
+.card.wide{grid-column:span 1}
+
+/* ---------- 截图 ---------- */
+.screens{
+  border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  background:var(--panel);
+}
+.screen-main{position:relative; background:#05080f}
+.screen-main img{width:100%; height:auto}
+.screen-cap{
+  position:absolute; left:16px; bottom:16px; font-size:12.5px;
+  background:rgba(8,13,28,.86); border:1px solid var(--line-strong);
+  padding:7px 12px; border-radius:10px; color:#dbe6ff; backdrop-filter:blur(8px);
+}
+.thumbs{display:flex; gap:10px; padding:14px; overflow-x:auto; border-top:1px solid var(--line)}
+.thumb{
+  flex:none; width:132px; border-radius:10px; overflow:hidden; cursor:pointer;
+  border:1px solid var(--line); background:#0a1120; padding:0; position:relative;
+  transition:border-color .2s, transform .2s;
+}
+.thumb img{width:100%;height:82px;object-fit:cover;opacity:.75}
+.thumb span{display:block;font-size:11px;color:var(--muted);padding:6px 4px;text-align:center;font-family:var(--font)}
+.thumb:hover{transform:translateY(-2px)}
+.thumb.active{border-color:var(--accent)}
+.thumb.active img{opacity:1}
+.thumb.active span{color:#dbeafe}
+
+/* ---------- 安装步骤 ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{
+  border:1px solid var(--line); border-radius:var(--radius); padding:24px;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+}
+.step-no{
+  display:inline-grid; place-items:center; width:30px;height:30px;border-radius:9px;
+  background:rgba(59,130,246,.18); border:1px solid rgba(59,130,246,.4);
+  color:#bfdbfe; font-weight:800; font-size:13px; margin-bottom:14px;
+}
+.step h3{font-size:16px}
+.step p{font-size:13px;margin-top:7px}
+.note{
+  margin-top:18px; display:flex; gap:12px; align-items:flex-start;
+  border:1px solid rgba(251,191,36,.28); background:rgba(251,191,36,.06);
+  border-radius:14px; padding:14px 16px; font-size:13px; color:#fde68a;
+}
+.note svg{width:17px;height:17px;flex:none;margin-top:3px}
+
+/* ---------- 隐私 ---------- */
+.privacy{
+  display:grid; grid-template-columns:1.1fr .9fr; gap:40px; align-items:center;
+}
+.privacy-list{display:grid; gap:12px; margin-top:22px}
+.p-item{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.p-item svg{width:18px;height:18px;flex:none;color:var(--success);margin-top:3px}
+.p-item b{display:block;font-size:14px}
+.p-item span{font-size:12.5px;color:var(--muted)}
+.codebox{
+  border:1px solid var(--line); border-radius:16px; background:rgba(4,9,20,.65);
+  padding:20px; font-family:Consolas,"Cascadia Mono",monospace; font-size:12.5px;
+  color:#c7d2fe; overflow:auto;
+}
+.codebox .c{color:#64748b}
+.codebox .k{color:#7dd3fc}
+.codebox .s{color:#86efac}
+
+/* ---------- FAQ ---------- */
+.faq{display:grid; gap:10px}
+details{
+  border:1px solid var(--line); border-radius:14px; background:var(--panel);
+  padding:0 18px; transition:border-color .2s;
+}
+details[open]{border-color:rgba(59,130,246,.4); background:rgba(59,130,246,.06)}
+summary{
+  cursor:pointer; list-style:none; padding:16px 0; font-size:14.5px; font-weight:650;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+"; color:var(--muted-2); font-weight:400}
+details[open] summary::after{content:"−"}
+details p{font-size:13.5px; padding:0 0 16px; color:var(--muted)}
+
+/* ---------- 下载区 ---------- */
+.download{
+  border:1px solid rgba(59,130,246,.35); border-radius:26px; padding:46px;
+  background:
+    radial-gradient(700px 280px at 18% 0%, rgba(59,130,246,.3), transparent 62%),
+    linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  box-shadow:var(--shadow); display:grid; grid-template-columns:1.2fr .8fr; gap:40px; align-items:center;
+}
+.download h2{font-size:clamp(24px,2.4vw,32px)}
+.download .lead{margin-top:12px}
+.dl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.dl-meta{display:grid;gap:10px;font-size:12.5px;color:var(--muted)}
+.dl-meta div{display:flex;justify-content:space-between;gap:14px;border-bottom:1px dashed var(--line);padding-bottom:8px}
+.dl-meta div:last-child{border-bottom:0;padding-bottom:0}
+.dl-meta b{color:#dbe6ff;font-weight:650}
+.hash{
+  display:flex; align-items:center; gap:10px; margin-top:16px;
+  border:1px solid var(--line); border-radius:12px; padding:10px 12px;
+  background:rgba(4,9,20,.6); font-family:Consolas,monospace; font-size:11.5px;
+  color:#a5b4fc; word-break:break-all;
+}
+.hash button{
+  flex:none; border:1px solid var(--line-strong); background:var(--panel);
+  color:var(--text); border-radius:8px; padding:5px 10px; font-size:11.5px;
+  cursor:pointer; font-family:var(--font);
+}
+.hash button:hover{background:var(--panel-strong)}
+
+footer{border-top:1px solid var(--line); padding:30px 0 46px; color:var(--muted-2); font-size:12.5px}
+.foot{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.foot-links{display:flex;gap:18px}
+.foot-links a:hover{color:var(--text)}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+@media (max-width:1020px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .features{grid-template-columns:repeat(2,1fr)}
+  .privacy{grid-template-columns:1fr;gap:26px}
+  .download{grid-template-columns:1fr;padding:34px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(2){border-right:0}
+  .stat:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+@media (max-width:720px){
+  .nav-links{display:none}
+  .section{padding:64px 0}
+  .features,.steps{grid-template-columns:1fr}
+  .hero{padding:50px 0 20px}
+  .float-card{display:none}
+  .sec-head{flex-direction:column;align-items:flex-start}
+  .download{padding:26px}
+  .stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top">
+      <img src="assets/icon.png" alt="本地电脑万能助手图标">
+      本地电脑万能助手
+    </a>
+    <nav class="nav-links">
+      <a href="#features">功能</a>
+      <a href="#screens">界面预览</a>
+      <a href="#install">安装</a>
+      <a href="#privacy">隐私</a>
+      <a href="#faq">常见问题</a>
+    </nav>
+    <div class="nav-cta">
+      <span class="version-chip">V2.0.0</span>
+      <a class="btn btn-primary" href="LocalPCMaster_Setup.exe" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        下载
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- 首屏 -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Windows 10/11 本地工具箱 · V2.0.0</span>
+        <h1>五个独立工具，管好日常 Windows 维护<br><span class="grad-text">纯本地 · 零联网 · 开源免费</span></h1>
+        <p class="lead">风险扫描、垃圾清理、图片工具箱、硬件性能优化、软件卸载残留清理，五个功能各自独立成 exe，后台静默执行、完成即退出；主程序只负责界面与确认。</p>
+        <ul class="hero-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 12 5 5 11-11"/></svg>纯本地运行：无账号、无云端、无遥测，断网可用，不写日志、不写清理报告</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 12 5 5 11-11"/></svg>免管理员安装：装入当前用户目录，自带卸载入口，设置与备份可随卸载清除</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 12 5 5 11-11"/></svg>MIT 开源免费：源码可审查；删除、覆盖、卸载等高风险操作全部二次确认</li>
+        </ul>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="LocalPCMaster_Setup.exe" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            下载安装包 · 66.2 MB
+          </a>
+          <a class="btn btn-ghost" href="#features">查看五大功能</a>
+        </div>
+        <div class="hero-meta">
+          <span><i class="dot"></i>Windows 10 / 11 · 64 位</span>
+          <span>无需管理员权限</span>
+          <span>安装后约 97 MB</span>
+        </div>
+      </div>
+
+      <div class="preview">
+        <div class="frame">
+          <div class="frame-bar">
+            <i class="tl r"></i><i class="tl y"></i><i class="tl g"></i>
+            <span class="frame-title">本地电脑万能助手 · 主页</span>
+          </div>
+          <img src="assets/home.jpg" alt="本地电脑万能助手主页界面" width="1100" height="700">
+        </div>
+        <div class="float-card fc-1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/></svg>
+          5 个独立功能程序
+        </div>
+        <div class="float-card fc-2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m5 19 14-14"/></svg>
+          0 网络请求
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="stats reveal">
+        <div class="stat"><b>5</b><span>大核心功能</span></div>
+        <div class="stat"><b>12</b><span>种界面语言</span></div>
+        <div class="stat"><b>0</b><span>联网请求</span></div>
+        <div class="stat"><b>MIT</b><span>开源免费协议</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 功能 -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">功能总览</span>
+          <h2 style="margin-top:14px">五大功能，各自独立</h2>
+          <p class="lead">点击任一功能，主程序会启动对应的独立 exe：AntiVirus、Cleaner、ImageTool、PerfBoost、Uninstaller，无窗口后台执行，完成后自动退出。</p>
+        </div>
+        <span class="sec-note">每个功能 = 一个独立程序</span>
+      </div>
+
+      <div class="features">
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <h3>风险扫描 · 文件归类</h3>
+          <p>本地规则扫描双重扩展名伪装、autorun 启动项、临时目录可疑程序等风险项，只提示不自动处置；6 类文件可按规则迁移到指定磁盘，迁移前二次确认。</p>
+          <div class="tags"><span class="tag">AntiVirus.exe</span><span class="tag">只告警不删除</span><span class="tag">磁盘归类迁移</span></div>
+        </article>
+
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h16"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-5"/></svg></div>
+          <h3>一键垃圾清理</h3>
+          <p>全盘扫描缓存、空文件夹与空文档，先预览勾选再清理；白名单长期生效，系统目录默认保护，失败项自动跳过并汇总结果。</p>
+          <div class="tags"><span class="tag">Cleaner.exe</span><span class="tag">预览勾选</span><span class="tag">持久白名单</span></div>
+        </article>
+
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m4 18 5-5 3 3 4-4 4 4"/></svg></div>
+          <h3>图片工具箱</h3>
+          <p>png、jpg、webp、bmp、tiff、gif、ico 批量互转与缩放（144P–8K 预设）；画笔、圆选、方框三种选区做局部消除，默认另存新文件，确认后才覆盖原图。</p>
+          <div class="tags"><span class="tag">ImageTool.exe</span><span class="tag">格式互转</span><span class="tag">局部消除</span></div>
+        </article>
+
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div>
+          <h3>硬件性能优化</h3>
+          <p>读取 CPU、GPU、内存、显示器信息，调整刷新率与视觉特效、Game DVR 参数；改动前自动备份原始值，一键还原，附带内存整理与启动项管理。</p>
+          <div class="tags"><span class="tag">PerfBoost.exe</span><span class="tag">备份可还原</span><span class="tag">启动项管理</span></div>
+        </article>
+
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16"/><path d="M6 7v13h12V7"/><path d="M9 7V4h6v3"/><path d="M10 11v5M14 11v5"/></svg></div>
+          <h3>软件卸载残留清理</h3>
+          <p>只列出第三方软件、自动屏蔽系统组件；卸载后扫描安装目录、AppData 与注册表残留；删除注册表前自动导出备份，支持回滚。</p>
+          <div class="tags"><span class="tag">Uninstaller.exe</span><span class="tag">残留扫描</span><span class="tag">注册表备份</span></div>
+        </article>
+
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 9h10M7 12h6"/></svg></div>
+          <h3>统一的现代界面</h3>
+          <p>左侧导航与顶部全局搜索，5 张悬浮动画功能卡片，12 种语言、明暗模式与自定义强调色；所有配置持久化保存，高风险操作均二次确认。</p>
+          <div class="tags"><span class="tag">CustomTkinter</span><span class="tag">12 语言</span><span class="tag">深色 / 浅色</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 界面预览 -->
+  <section class="section" id="screens">
+    <div class="container">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">界面预览</span>
+          <h2 style="margin-top:14px">真实界面，不用想象</h2>
+          <p class="lead">以下是程序实际运行截图：从主页到五个功能页，以及安装向导。</p>
+        </div>
+        <span class="sec-note">点击缩略图切换</span>
+      </div>
+
+      <div class="screens reveal">
+        <div class="screen-main">
+          <img id="shot" src="assets/home.jpg" alt="主页界面">
+          <div class="screen-cap" id="shotCap">主页 · 五大功能卡片</div>
+        </div>
+        <div class="thumbs" id="thumbs">
+          <button class="thumb active" data-src="assets/home.jpg" data-cap="主页 · 五大功能卡片" data-alt="主页界面">
+            <img src="assets/home.jpg" alt="主页"><span>主页</span>
+          </button>
+          <button class="thumb" data-src="assets/security.jpg" data-cap="风险扫描 · 磁盘选择与风险列表" data-alt="风险扫描界面">
+            <img src="assets/security.jpg" alt="风险扫描"><span>风险扫描</span>
+          </button>
+          <button class="thumb" data-src="assets/cleaner.jpg" data-cap="垃圾清理 · 扫描中计时提示" data-alt="垃圾清理界面">
+            <img src="assets/cleaner.jpg" alt="垃圾清理"><span>垃圾清理</span>
+          </button>
+          <button class="thumb" data-src="assets/imagetool.jpg" data-cap="图片工具箱 · 格式转换与选区消除" data-alt="图片工具箱界面">
+            <img src="assets/imagetool.jpg" alt="图片工具箱"><span>图片工具箱</span>
+          </button>
+          <button class="thumb" data-src="assets/performance.jpg" data-cap="性能优化 · 硬件信息与性能参数" data-alt="性能优化界面">
+            <img src="assets/performance.jpg" alt="性能优化"><span>性能优化</span>
+          </button>
+          <button class="thumb" data-src="assets/uninstaller.jpg" data-cap="软件卸载 · 第三方软件列表" data-alt="软件卸载界面">
+            <img src="assets/uninstaller.jpg" alt="软件卸载"><span>软件卸载</span>
+          </button>
+          <button class="thumb" data-src="assets/installer.jpg" data-cap="安装向导 · 免管理员，装到当前用户目录" data-alt="安装向导界面">
+            <img src="assets/installer.jpg" alt="安装向导"><span>安装向导</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 安装 -->
+  <section class="section" id="install">
+    <div class="container">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">安装</span>
+          <h2 style="margin-top:14px">三步装好，随时可卸载</h2>
+          <p class="lead">安装包是一个独立的 Setup.exe，已经把主程序与 5 个功能程序全部打包在内。</p>
+        </div>
+        <span class="sec-note">Windows 10 / 11 · 64 位</span>
+      </div>
+
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-no">1</div>
+          <h3>下载安装包</h3>
+          <p>点击页面上的下载按钮，得到 <b style="color:#dbe6ff">LocalPCMaster_Setup.exe</b>（66.2 MB）。</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-no">2</div>
+          <h3>双击运行</h3>
+          <p>默认安装到 <b style="color:#dbe6ff">%LOCALAPPDATA%\Programs\LocalPCMaster</b>，无需管理员权限；可自选目录、桌面与开始菜单快捷方式。</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-no">3</div>
+          <h3>启动即可用</h3>
+          <p>安装完成会自动启动。卸载入口会出现在「设置 → 应用 → 已安装的应用」，安装目录内为 <b style="color:#dbe6ff">unins000.exe</b>。</p>
+        </div>
+      </div>
+
+      <div class="note reveal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5M12 17h.01"/></svg>
+        <div>安装包未做数字签名，Windows SmartScreen 可能提示「已保护你的电脑」。点击「更多信息」→「仍要运行」即可。程序完全离线，不连接任何服务器。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 隐私 -->
+  <section class="section" id="privacy">
+    <div class="container privacy">
+      <div class="reveal">
+        <span class="eyebrow">隐私与安全</span>
+        <h2 style="margin-top:14px">所有数据，都留在你自己的电脑里</h2>
+        <p class="lead" style="margin-top:12px">程序不发起任何网络请求，不写清理报告、不写日志。只保存必要的本地配置与可回滚备份，你可以随时手动删除。</p>
+        <div class="privacy-list">
+          <div class="p-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 12 5 5 11-11"/></svg>
+            <div><b>完全离线</b><span>没有账号、没有云端、没有遥测；断网也能使用全部功能。</span></div>
+          </div>
+          <div class="p-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 12 5 5 11-11"/></svg>
+            <div><b>只存必要配置</b><span>settings.json（语言 / 主题 / 白名单 / 分配规则）与 data/ 下的安全备份，用于回滚。</span></div>
+          </div>
+          <div class="p-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 12 5 5 11-11"/></svg>
+            <div><b>高风险操作二次确认</b><span>删除注册表、覆盖原图、卸载软件等操作，都会在主程序窗口里再问你一次。</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <div class="codebox">
+<span class="c"># 安装后的目录结构</span><br>
+LocalPCMaster\\<br>
+├─ LocalPCMaster.exe <span class="c"># 主程序（界面）</span><br>
+├─ unins000.exe <span class="c"># 卸载程序</span><br>
+├─ tools\\<br>
+│  ├─ AntiVirus.exe <span class="c"># 风险扫描</span><br>
+│  ├─ Cleaner.exe <span class="c"># 垃圾清理</span><br>
+│  ├─ ImageTool.exe <span class="c"># 图片工具箱</span><br>
+│  ├─ PerfBoost.exe <span class="c"># 硬件性能</span><br>
+│  └─ Uninstaller.exe <span class="c"># 软件卸载</span><br>
+├─ _internal\\ <span class="c"># 运行时依赖</span><br>
+└─ data\\ <span class="c"># 安全备份（可删）</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">常见问题</span>
+          <h2 style="margin-top:14px">安装前后，你可能想知道</h2>
+        </div>
+      </div>
+      <div class="faq">
+        <details class="reveal">
+          <summary>为什么每个功能都是独立的 exe？</summary>
+          <p>点击某功能时只启动对应程序，处理结束立即退出，主界面保持轻量、互不抢占资源；扫描与清理等重操作由独立 exe 在后台完成，主界面不会卡死。</p>
+        </details>
+        <details class="reveal">
+          <summary>安装需要管理员权限吗？</summary>
+          <p>不需要。默认装入 %LOCALAPPDATA%\Programs\LocalPCMaster，快捷方式与卸载信息只写当前用户注册表（HKCU）；只有手动改装到 Program Files 才需要管理员确认。</p>
+        </details>
+        <details class="reveal">
+          <summary>会联网或上传我的文件吗？</summary>
+          <p>不会。程序不含网络代码，扫描、清理、修复全部在本机完成；断网状态下全部功能照常可用，也可用防火墙出站拦截后自行复测。</p>
+        </details>
+        <details class="reveal">
+          <summary>功能程序启动时会在 Temp 解压吗？</summary>
+          <p>5 个功能程序为单文件模式，首次运行解压到系统临时目录，进程退出后自动清理；主程序是目录模式，不会向 Temp 写入解压缓存。</p>
+        </details>
+        <details class="reveal">
+          <summary>SmartScreen 提示“已保护你的电脑”或被杀软拦截怎么办？</summary>
+          <p>安装包未做代码签名，首次运行请点“更多信息 → 仍要运行”；个别安全软件可能对未签名新程序弹出提示，本项目以 MIT 协议开源、代码可审查，确认来源后可加入信任列表。</p>
+        </details>
+        <details class="reveal">
+          <summary>如何卸载？会留下残留吗？</summary>
+          <p>运行安装目录下的 unins000.exe，或在“设置 → 应用 → 已安装的应用”中卸载；程序目录、快捷方式、HKCU 卸载项一并清除，settings.json 与 data\ 备份随卸载删除。</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- 下载 -->
+  <section class="section" style="padding-top:24px">
+    <div class="container">
+      <div class="download reveal">
+        <div>
+          <span class="eyebrow">立即下载</span>
+          <h2 style="margin-top:14px">本地电脑万能助手 V2.0.0</h2>
+          <p class="lead">一个安装包，带走全部 5 个功能。开源免费，纯本地运行。</p>
+          <div class="dl-actions">
+            <a class="btn btn-primary" href="LocalPCMaster_Setup.exe" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+              下载 LocalPCMaster_Setup.exe
+            </a>
+            <a class="btn btn-ghost" href="#install">安装说明</a>
+          </div>
+        </div>
+        <div>
+          <div class="dl-meta">
+            <div><span>版本</span><b>V2.0.0</b></div>
+            <div><span>安装包大小</span><b>66.2 MB</b></div>
+            <div><span>安装后占用</span><b>约 97 MB</b></div>
+            <div><span>系统要求</span><b>Windows 10 / 11 · 64 位</b></div>
+            <div><span>许可协议</span><b>MIT · 开源免费</b></div>
+          </div>
+          <div class="hash">
+            <span id="hashText">d8b642e9283649846fb3c53a0a41f28c861cbf07dcc082417396fde8ed2106d7</span>
+            <button id="copyHash" type="button">复制</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container foot">
+    <div>© 2026 本地电脑万能助手 · MIT License · 纯本地运行，无任何网络请求</div>
+    <div class="foot-links">
+      <a href="#top">回到顶部</a>
+      <a href="LocalPCMaster_Setup.exe" download>下载安装包</a>
+      <a href="#faq">常见问题</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // 截图切换
+  var shot = document.getElementById('shot');
+  var cap = document.getElementById('shotCap');
+  var thumbs = document.querySelectorAll('.thumb');
+  thumbs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      thumbs.forEach(function (x) { x.classList.remove('active'); });
+      t.classList.add('active');
+      shot.src = t.dataset.src;
+      shot.alt = t.dataset.alt || '';
+      cap.textContent = t.dataset.cap || '';
+    });
+  });
+
+  // 滚动淡入
+  var items = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    items.forEach(function (el) { io.observe(el); });
+  } else {
+    items.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  // 复制校验值
+  var btn = document.getElementById('copyHash');
+  btn.addEventListener('click', function () {
+    var text = document.getElementById('hashText').textContent.trim();
+    var done = function () {
+      btn.textContent = '已复制';
+      setTimeout(function () { btn.textContent = '复制'; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else {
+      fallback();
+    }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
+</body>
+</html>
