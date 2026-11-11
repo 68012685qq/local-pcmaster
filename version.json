@@ -1,8 +1,8 @@
 {
   "version": "2.2.0",
   "url": "https://github.com/68012685qq/local-pcmaster/releases/latest/download/LocalPCMaster_Setup.exe",
-  "sha256": "15f923a582b14a3b506e3508c280009252cd1deb6a4aae4e4377941dfc0a999f",
-  "size": 41310117,
+  "sha256": "09bf9b6f76b92d8db018a6d9a34214183703e706a7c0f0cc396632258197811d",
+  "size": 41308272,
   "date": "2026-11-11",
   "notes": [
     "1. 新增自动更新系统：启动后自动检查新版本，发现更新即自动下载、",
